@@ -1,47 +1,38 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import useForm from './useForm'
+import { helpers, required } from '@vuelidate/validators'
+
+const initialState = {
+  name: '',
+  password: ''
+}
+
+const rules = {
+  name: { required: helpers.withMessage('이름은 필숫값입니다', required) },
+  password: { required: helpers.withMessage('패스워드는 필숫값입니다', required) }
+}
+
+const onValid = <T,>(payload: T) => {
+  alert(JSON.stringify(payload))
+}
+
+const onInvalid = (errors: string[]) => {
+  alert(JSON.stringify(errors))
+}
+
+const { model, submit, reset } = useForm<typeof initialState>({
+  onValid,
+  onInvalid,
+  rules,
+  initialState
+})
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+  <form @submit.prevent="submit">
+    <input type="text" name="name" v-model="model.name" />
+    <input type="text" name="password" v-model="model.password" />
+    <input type="submit" />
+    <input type="reset" @click="reset" />
+  </form>
 </template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
-</style>
